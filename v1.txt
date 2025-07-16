@@ -1,0 +1,237 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int Stack[20], top = -1;
+
+void push(int item)
+{
+    if (top >= 20)
+    {
+        printf("Stack overflow");
+        exit(1);
+    }
+    Stack[++top] = item;
+}
+
+int pop()
+{
+    int ch;
+    if (top <= -1)
+    {
+        printf("Stack underflow");
+        exit(1);
+    }
+    ch = Stack[top--];
+    return ch;
+}
+
+char Convert(int item)
+{
+    switch (item)
+    {
+        case 0: return 'E';
+        case 1: return 'e';
+        case 2: return 'T';
+        case 3: return 't';
+        case 4: return 'F';
+        case 5: return 'i';
+        case 6: return '+';
+        case 7: return '*';
+        case 8: return '(';
+        case 9: return ')';
+        case 10: return '$';
+        default: return '?';
+    }
+}
+
+void main()
+{
+    int m[10][10], i, j, k;
+    char ips[20];
+    int ip[20], a, b, t;
+
+    // Grammar encoding
+    m[0][5] = m[0][8] = 21;
+    m[1][6] = 621;
+    m[1][9] = m[1][5] = -2;
+    m[2][5] = m[2][8] = 43;
+    m[3][6] = m[3][9] = m[3][10] = -2;
+    m[3][7] = 743;
+    m[4][5] = 5;
+    m[4][8] = 809;
+
+    printf("Enter the input string (end with $): ");
+    scanf("%s", ips);  // Correct input buffer
+
+    // Convert input to integer codes
+    for(i = 0; ips[i] != '\0'; i++)
+    {
+        switch(ips[i])
+        {
+            case 'E': k = 0; break;
+            case 'e': k = 1; break;
+            case 'T': k = 2; break;
+            case 't': k = 3; break;
+            case 'F': k = 4; break;
+            case 'i': k = 5; break;
+            case '+': k = 6; break;
+            case '*': k = 7; break;
+            case '(': k = 8; break;
+            case ')': k = 9; break;
+            case '$': k = 10; break;
+            default:
+                printf("Invalid character: %c\n", ips[i]);
+                exit(1);
+        }
+        ip[i] = k;
+    }
+
+    ip[i] = 10;      // Add $ at the end
+    ip[i + 1] = -1;  // End marker
+
+    // Initialize stack
+    push(10);  // $
+    push(0);   // E
+
+    i = 0;
+    printf("\nStack\t\tInput\n");
+
+
+    while(1)
+    {
+        for(j = 0; j <= top; j++)
+            printf("%c", Convert(Stack[j]));
+
+        printf("\t\t");
+
+        for(k = i; ip[k] != -1; k++)
+            printf("%c", Convert(ip[k]));
+
+        printf("\n");
+
+        if(Stack[top] == ip[i])
+        {
+            if(ip[i] == 10)
+            {
+                printf("\nSuccess\n");
+                return;
+            }
+            else
+            {
+                top--;
+                i++;
+            }
+        }
+        else if(Stack[top] <= 4 && Stack[top] >= 0)
+        {
+            a = Stack[top];
+            b = ip[i];
+            top--;
+            t = m[a][b];  // <- MISSING LINE WAS HERE
+
+            if (t == -2)
+                continue;
+
+            while(t > 0)
+            {
+                push(t % 10);
+                t = t / 10;
+            }
+        }
+        else
+        {
+            printf("Error\n");
+            return;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int i, j, n, s1 = 0, s2 = 0, c1 = 0, c2 = 0;
+    printf("Enter the number of values in multiples of 5: ");
+    scanf("%d", &n);
+    
+    printf("The Sum without loop unrolling:\n");
+    for (i = 1; i <= n; i++) {
+        s1 += i;
+        c1++;
+    }
+    printf("The Sum is: %d\n", s1);
+    printf("The number of iterations are: %d\n", c1);
+
+    printf("The Sum with loop unrolling:\n");
+    for (j = 1; j <= n; j += 5) {
+        s2 += j;
+        s2 += j + 1;
+        s2 += j + 2;
+        s2 += j + 3;
+        s2 += j + 4;
+        c2++;
+    }
+    printf("The Sum is: %d\n", s2);
+    printf("The number of iterations are: %d\n", c2);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#define Val 2*3+4
+
+void fun(int val) {
+    int res;
+    res = val + Val;
+    printf("\n Without Constant Propagation\n");
+    printf(" %d\n", res);
+}
+
+void funcp(int val) {
+    int res;
+    res = val + (2 * 3 + 4);
+    printf("\n With Constant Propagation\n");
+    printf(" %d\n", res);
+}
+
+int main() {
+    int val;
+    printf("Enter value of val:\n");
+    scanf("%d", &val);
+    fun(val); // without constant propagation
+    funcp(val);  // with constant propagation
+    return 0;
+}
